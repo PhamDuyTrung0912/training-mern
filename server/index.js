@@ -1,9 +1,13 @@
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
+const authRouter=require('./routes/auth');
+const postRouter=require('./routes/post');
 
 const connectDB = async () => {
     try {
-        await mongoose.connect(`mongodb+srv://trungti98:trungti98@mern-learning.efanj.mongodb.net/mern-learning?retryWrites=true&w=majority`,
+        await mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@mern-learning.efanj.mongodb.net/mern-learning?retryWrites=true&w=majority`,
             {
                 useCreateIndex: true,
                 useNewUrlParser: true,
@@ -21,11 +25,13 @@ const connectDB = async () => {
 connectDB();
 
 const app = express();
-const PORT = 5000
 
-app.get("/", (req, res) => {
-    res.send("Hello world")
-})
+app.use(express.json());
+
+app.use('/api/auth',authRouter);
+app.use('/api/posts',postRouter);
+
+const PORT = 5000
 
 app.listen(PORT, () => {
     console.log(`Server run ${PORT}`)
